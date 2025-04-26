@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+
+{% block title %}Setup{% endblock %}
+
+
+
+{% block head %}
+    {{ super() }}   
+{% endblock %}
+
+{% block content %}
+
+    <script>
+    async function generateKeyPair(event, form) {
+      event.preventDefault();
+      const response = await fetch('/generate-keys');
+      const data = await response.json();
+  
+      form.field1.value = data.public_key;
+      form.field2.value = data.private_key;
+      form.field3.value = "✓ Keys Ready";
+    }
+  </script>
+  
+
+    <div class>
+
+
+    <form class="box" onsubmit="generateKeyPair(event, this)">
+        <p class="box-header"> Trusted Party Initialization</p>
+        <input type="text" name="field1" placeholder="Public Key">
+        <input type="text" name="field2" placeholder="Private Key">
+        <input type="text" name="field3" placeholder="Other">
+        <button type="submit">Generate</button>
+    </form>
+
+          
+
+    <div class="box">
+        <input type="text" placeholder="Field 1">
+        <input type="text" placeholder="Field 2">
+        <input type="text" placeholder="Field 3">
+        <button>Submit</button>
+    </div>
+
+    <div class="box">
+        <input type="text" placeholder="Field 1">
+        <input type="text" placeholder="Field 2">
+        <input type="text" placeholder="Field 3">
+        <button>Submit</button>
+    </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}   
+{% endblock %}
