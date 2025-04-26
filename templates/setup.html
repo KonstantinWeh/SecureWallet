@@ -12,14 +12,35 @@
 {% block content %}
 
     <script>
-    async function generateKeyPair(event, form) {
+    async function generateTpiKeys(event, form) {
       event.preventDefault();
-      const response = await fetch('/generate-keys');
+      const response = await fetch('/trusted_party_initialization');
       const data = await response.json();
   
-      form.field1.value = data.public_key;
-      form.field2.value = data.private_key;
-      form.field3.value = "✓ Keys Ready";
+      form.TPIsk.value = data.sk;
+      form.K.value = data.K;
+      form.pkt.value = "⊥"
+    }
+    async function generateRsKeys(event, form) {
+      event.preventDefault();
+      const response = await fetch('/registration-station-setup');
+      const data = await response.json();
+  
+      form.skRS_d.value = data.sk[0];
+      form.skRS_n.value = data.sk[1];
+      form.pkRS_e.value = data.pk[0];
+      form.pkRS_n.value = data.pk[1];
+    }
+    async function initializeCard(event, form) {
+      event.preventDefault();
+      const response = await fetch('/initialize-card');
+      const data = await response.json();
+  
+      form.pkRS_e_card.value = data.pkRS[0];
+      form.pkRS_n_card.value = data.pkRS[1];
+      form.sk_card.value = data.sk;
+      form.pk_T_card.value = data.pkT;
+      form.K_card.value = data.K;
     }
   </script>
   
@@ -27,29 +48,55 @@
     <div class>
 
 
-    <form class="box" onsubmit="generateKeyPair(event, this)">
-        <p class="box-header"> Trusted Party Initialization</p>
-        <input type="text" name="field1" placeholder="Public Key">
-        <input type="text" name="field2" placeholder="Private Key">
-        <input type="text" name="field3" placeholder="Other">
+    <form class="box" onsubmit="generateTpiKeys(event, this)">
+        <p class="box-header">Trusted Party Initialization</p>
+        <div class="input-row">
+            <p>sk_T</p>
+            <input type="text" name="TPIsk" placeholder="sk">
+            <input type="text" name="K" placeholder="K">
+        </div>
+        <div class="input-row"><p>pk_T</p><input type="text" name="pkt" placeholder="pkt"></div>
         <button type="submit">Generate</button>
     </form>
 
           
 
-    <div class="box">
-        <input type="text" placeholder="Field 1">
-        <input type="text" placeholder="Field 2">
-        <input type="text" placeholder="Field 3">
-        <button>Submit</button>
-    </div>
+    <form class="box" onsubmit="generateRsKeys(event, this)">
+        <p class="box-header">Registration Station Setup</p>
+        <div class="input-row">
+            <p>sk_RS</p>
+            <input type="text" name="skRS_d" placeholder="d">
+            <input type="text" name="skRS_n" placeholder="N">
+        </div>
+        <div class="input-row">
+            <p>pk_RS</p>
+            <input type="text" name="pkRS_e" placeholder="e">
+            <input type="text" name="pkRS_n" placeholder="N">
+        </div>
+        <button>Generate</button>
+    </form>
 
-    <div class="box">
-        <input type="text" placeholder="Field 1">
-        <input type="text" placeholder="Field 2">
-        <input type="text" placeholder="Field 3">
-        <button>Submit</button>
-    </div>
+    <form class="box" onsubmit="initializeCard(event, this)">
+        <p class="box-header">Smart Card Initialization</p>
+        <div class="input-row">
+            <p>pk_RS</p>
+            <input type="text" name="pkRS_e_card" placeholder="e">
+            <input type="text" name="pkRS_n_card" placeholder="N">
+        </div>
+        <div class="input-row">
+            <p>sk</p>
+            <input type="text" name="sk_card" placeholder="sk">
+        </div>
+        <div class="input-row">
+            <p>pk_T</p>
+            <input type="text" name="pk_T_card" placeholder="pkT">
+        </div>
+        <div class="input-row">
+            <p>K</p>
+            <input type="text" name="K_card" placeholder="K">
+        </div>
+        <button>Initialize</button>
+    </form>
     </div>
 {% endblock %}
 

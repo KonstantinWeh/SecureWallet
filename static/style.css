@@ -36,6 +36,15 @@ box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     right: 0;    
 }
 
+.input-row {
+    display: flex;
+    gap: 10px; /* spacing between inputs */
+    margin-bottom: 10px;
+}
+.input-row input {
+    flex: 1; /* each input takes up equal width */  
+}
+
 .box-header{
     text-align: center;
     font-weight: bold;
