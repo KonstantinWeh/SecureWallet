@@ -67,3 +67,24 @@ def initialize_card():
         'pkT': trusted_party.pk_T,
         'K': trusted_party.K.hex()
     })
+
+
+@home_bp.route("/get-params")
+def get_params():
+
+    trusted_party = get_trusted_party()
+
+    print(
+        trusted_party.pk_RS,
+        trusted_party.sk_RS,
+        trusted_party.sk.hex(),
+        trusted_party.pk_T,
+        trusted_party.K.hex(), 
+    )
+    return jsonify({
+        'pkRS': trusted_party.pk_RS,
+        'skRS': trusted_party.sk_RS,
+        'sk': trusted_party.sk.hex(),
+        'pkT': trusted_party.pk_T,
+        'K': trusted_party.K.hex(),
+    })

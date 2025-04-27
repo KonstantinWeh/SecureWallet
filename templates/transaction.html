@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+
+{% block title %}Transaction{% endblock %}
+
+
+
+{% block head %}
+    {{ super() }}   
+{% endblock %}
+
+{% block content %}
+
+    <script>
+
+        async function loadHouseholds() {
+            const response = await fetch('/get-database');
+            const households = await response.json();
+          
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Clear old rows
+          
+            households.forEach(household => {
+              const row = document.createElement('tr');
+              row.className = 'border-b';
+          
+              row.innerHTML = `
+                <td class="px-6 py-4">${household.id}</td>
+                <td class="px-6 py-4">${household.budget}</td>
+                <td class="px-6 py-4">${household.counter}</td>
+              `;
+          
+              tbody.appendChild(row);
+            });
+          }
+        
+        async function makePayment(event, form) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(form); 
+        
+            const data = {
+                id_h: formData.get('household_id'),
+                price: formData.get('price'),
+                reclaim_period: formData.get('reclaim_period'),
+            };
+        
+            const response = await fetch('/make-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        
+            const result = await response.json();
+
+            console.log(result); 
+
+            const { signature, tag, commitment, com_r } = result.proof;
+
+            form.transaction_tag.value = tag;
+            form.signature.value = signature;
+            form.commitment.value = commitment;
+            form.commitment_random.value = com_r;
+
+        }
+
+
+
+        loadHouseholds();
+  </script>
+
+    <div>
+    
+    <form class="box" onsubmit="makePayment(event, this)">
+        <div class="form-columns">
+            
+            <!-- Smart Card Section -->
+            <div class="form-section">
+                <p class="box-header">Smart Card</p>
+                <div class="input-group">
+                    <label>Household ID</label>
+                    <input type="text" name="household_id" placeholder="Enter Household ID">
+                </div>
+            </div>
+    
+            <!-- Vendor Section -->
+            <div class="form-section">
+                <p class="box-header">Vendor</>
+                <div class="input-group">
+                    <label>Price</label>
+                    <input type="text" name="price" placeholder="Enter Price">
+                </div>
+                <div class="input-group">
+                    <label>Reclaim Period</label>
+                    <input type="text" name="reclaim_period" placeholder="Enter Reclaim Period">
+                </div>
+            </div>
+    
+        </div>
+    
+        <button type="submit">Make Payment</button>
+    
+
+
+        <p class="box-header">Primitives exchanged</p>
+        <div class="form-columns">
+            <!-- Smart Card Section -->
+            <div class="form-section">
+                <p class="box-header">Smart Card</p>
+                <div class="input-group">
+                    <label>Transaction Tag</label>
+                    <input type="text" name="transaction_tag" placeholder="Transaction Tag">
+                </div>
+                <div class="input-group">
+                    <label>Signature</label>
+                    <input type="text" name="signature" placeholder="Signature">
+                </div>
+                <div class="input-group">
+                    <label>Commitment</label>
+                    <input type="text" name="commitment" placeholder="Commitment">
+                </div>
+                <div class="input-group">
+                    <label>Commitment Random Number</label>
+                    <input type="text" name="commitment_random" placeholder="Random Number">
+                </div>
+            </div>
+    
+            <!-- Vendor Section -->
+            <div class="form-section">
+                <p class="box-header">Vendor</>
+                <div class="input-group">
+                    <label>Price</label>
+                    <input type="text" name="price" placeholder="Enter Price">
+                </div>
+                <div class="input-group">
+                    <label>Reclaim Period</label>
+                    <input type="text" name="reclaim_period" placeholder="Enter Reclaim Period">
+                </div>
+            </div>
+    
+    </form>
+    
+    </div>  
+
+
+        <div class="box">
+            <p class="box-header">Database</p>
+            <div class="overflow-x-auto rounded-lg shadow-lg mt-8">
+                <table class="min-w-full text-sm text-gray-700">
+                <thead class="bg-gray-200 text-gray-700 uppercase text-xs">
+                    <tr>
+                    <th class="px-6 py-3 text-left">Household ID</th>
+                    <th class="px-6 py-3 text-left">Budget</th>
+                    <th class="px-6 py-3 text-left">Counter</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for household in households %}
+                    <tr class="border-b">
+                    <td class="px-6 py-4">{{ household.id }}</td>
+                    <td class="px-6 py-4">{{ household.budget }}</td>
+                    <td class="px-6 py-4">{{ household.counter }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                    <td colspan="3" class="px-6 py-4 text-center text-gray-400">No households registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>          
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+{{ super() }}   
+{% endblock %}

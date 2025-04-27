@@ -1,4 +1,5 @@
 from services.ORAM import SimpleORAM
+from services.pedersen_commitment import PedersenCommitment
 
 
 class TrustedParty:
@@ -16,6 +17,8 @@ class TrustedParty:
             security_param_bits = 128
             num_blocks = 16
             self.DB = SimpleORAM(security_param_bits, num_blocks)
+
+            self.commitment_scheme = PedersenCommitment(security_param_bits)
 
             self._sk = self.DB.sk
             self._K = self.DB.K
@@ -76,7 +79,7 @@ class TrustedParty:
         self._pk_T = value
 
     def add_card(self, id_H, budget, ctr):
-        if id_H:
+        if id_H or id_H == 0:
             # TODO: we need to check wheter the id is in the range of the DB
             self.DB.write(id_H, budget, ctr)
         else:
@@ -87,9 +90,19 @@ class TrustedParty:
 
     def get_DB_view(self):
         return self.DB.get_DB_view()
+    
+    def user_has_enough_balance(self, id_H, price):
 
+        print(self.DB.read(id_H))
 
-
+        if self.DB.read(id_H) == False or self.DB.read(id_H) == None or self.DB.read(id_H)['budget'] < price:
+            # return False if error
+            return False
+        # otherwise, return balance and ctr
+        return (self.DB.read(id_H))
+    
+    def update_balance(self, id_H, budget, ctr):
+        self.DB.write(id_H, budget, ctr)
 
 
 def get_trusted_party():

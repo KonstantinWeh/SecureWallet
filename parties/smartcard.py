@@ -4,14 +4,8 @@ class SmartCard:
         self.pkRS, self.skT, self.pkT, self.K = st
         self.idH = None
         self.skRS = None
-        self.budget = None
         self.counter = None
 
-    
-
-    def receive_household_id(self, idH):
-        # Step 3: Receive household ID from RS
-        self.idH = idH
 
     def receive_skRS_and_verify(self, skRS, verify_signature_func):
         # Step 4: Receive RS's secret key and verify it against known pkRS
@@ -20,10 +14,6 @@ class SmartCard:
             return True
         else:
             return False
-
-    def receive_budget(self, bud):
-        # Step 5: Receive the allocated budget
-        self.budget = bud
 
     def initialize_counter_and_store(self, ORAM_Write, DB):
         # Step 6: Initialize counter and write budget to ORAM (secure storage)
@@ -41,18 +31,6 @@ class SmartCard:
             return (self.skRS, self.pkRS, self.skT, self.pkT, self.K, self.idH)
         else:
             return None
-
-
-# Mock helper functions (to simulate external behavior)
-def verify_signature_func(skRS, pkRS):
-    # Dummy signature verification
-    # In reality, you would use public key cryptography libraries
-    return True  # Always succeed for this example
-
-
-def ORAM_Write(DB, idH, data):
-    # Simulate ORAM write into a dictionary acting as DB
-    DB[idH] = data
 
 
 # Example Usage

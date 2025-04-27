@@ -1,3 +1,4 @@
+from parties.smartcard import SmartCard
 from services.RSADS import RSASignature
 from flask import jsonify, request, Blueprint, render_template
 from services.ORAM import SimpleORAM
@@ -17,15 +18,37 @@ def allocate_budget():
     data = request.get_json()
     budget = data.get('bud')
     household_id = data.get('id_h')
+    if household_id != '':
+        household_id = int(household_id)
 
     # Now you have `budget` and `household_id`
     print(budget, household_id)
 
     trusted_party.add_card(household_id, budget, 0)
-
-
-    
+   
     return {"status": "success", "budget": budget, "household_id": household_id}
+
+
+@registration_bp.route("/get-smart-card-state", methods=["POST"])
+def get_smart_card_state():
+
+    data = request.get_json()
+    household_id = data.get('id_h')
+
+    trusted_party = get_trusted_party()
+    
+    if household_id != '':
+        household_id = int(household_id) 
+
+
+    return jsonify({
+        'pkRS_e': trusted_party.pk_RS[0],
+        'pkRS_n': trusted_party.pk_RS[1],
+        'sk': trusted_party.sk.hex(),
+        'pkT': trusted_party.pk_T,
+        'K': trusted_party.K.hex(),
+        'id_H': household_id
+    })
 
 
 

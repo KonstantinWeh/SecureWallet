@@ -12,6 +12,7 @@
 {% block content %}
 
     <script>
+
     async function generateTpiKeys(event, form) {
       event.preventDefault();
       const response = await fetch('/trusted_party_initialization');
@@ -21,6 +22,7 @@
       form.K.value = data.K;
       form.pkt.value = "⊥"
     }
+
     async function generateRsKeys(event, form) {
       event.preventDefault();
       const response = await fetch('/registration-station-setup');
@@ -31,6 +33,7 @@
       form.pkRS_e.value = data.pk[0];
       form.pkRS_n.value = data.pk[1];
     }
+
     async function initializeCard(event, form) {
       event.preventDefault();
       const response = await fetch('/initialize-card');
@@ -42,6 +45,39 @@
       form.pk_T_card.value = data.pkT;
       form.K_card.value = data.K;
     }
+
+    async function get_params(event, form) {
+        const response = await fetch('/get-params');
+        const data = await response.json();
+
+        console.log(data)
+
+        // Find the form elements manually
+        const formTPI = document.querySelector('form[onsubmit*="generateTpiKeys"]');
+        const formRS = document.querySelector('form[onsubmit*="generateRsKeys"]');
+        const formCard = document.querySelector('form[onsubmit*="initializeCard"]');
+
+        // Set values in Trusted Party Initialization form
+        formTPI.TPIsk.value = data.sk;
+        formTPI.K.value = data.K;
+        formTPI.pkt.value = "⊥";
+
+        // Set values in Registration Station Setup form
+        formRS.skRS_d.value = data.skRS[0];
+        formRS.skRS_n.value = data.skRS[1];
+        formRS.pkRS_e.value = data.pkRS[0];
+        formRS.pkRS_n.value = data.pkRS[1];
+
+        // Set values in Smart Card Initialization form
+        formCard.pkRS_e_card.value = data.pkRS[0];
+        formCard.pkRS_n_card.value = data.pkRS[1];
+        formCard.sk_card.value = data.sk;
+        formCard.pk_T_card.value = data.pkT;
+        formCard.K_card.value = data.K;
+    }
+
+    get_params()
+
   </script>
   
 

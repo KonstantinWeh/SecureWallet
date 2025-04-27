@@ -38,6 +38,36 @@
         }
 
 
+        async function getSmartCardState(event, form) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(form); 
+        
+            const data = {
+                id_h: formData.get('SC_id_h')
+            };
+        
+            const response = await fetch('/get-smart-card-state', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        
+            const result = await response.json();
+
+            console.log(result); 
+            const { K, id_H, pkRS, pkT, sk } = result;
+
+            form.pkRS_e_card.value = result.pkRS_e;
+            form.pkRS_n_card.value = result.pkRS_n;
+            form.sk_card.value = result.sk;
+            form.pk_T_card.value = result.pkT;
+            form.K_card.value = result.K;
+        }
+
+
 
         async function loadHouseholds() {
             const response = await fetch('/get-database');
@@ -63,6 +93,7 @@
         loadHouseholds();
   </script>
 
+  <div>
     <div class="box">
         <p class="box-header">Database</p>
         <div class="overflow-x-auto rounded-lg shadow-lg mt-8">
@@ -100,6 +131,34 @@
         <div class="input-row"><p>Household ID</p><input type="text" name="id_h" placeholder="id_H - leave empty for new household"></div>
         <button type="submit">Allocate</button>
     </form>
+
+    <form class="box" onsubmit="getSmartCardState(event, this)">
+      <p class="box-header">Smart Card State</p>
+      <div class="input-row">
+        <p>id_H</p>
+        <input type="text" name="SC_id_h" placeholder="Household ID">
+    </div>
+    <button type="submit">Get state</button>
+
+        <div class="input-row">
+          <p>pk_RS</p>
+          <input type="text" name="pkRS_e_card" placeholder="e">
+          <input type="text" name="pkRS_n_card" placeholder="N">
+      </div>
+      <div class="input-row">
+          <p>sk</p>
+          <input type="text" name="sk_card" placeholder="sk">
+      </div>
+      <div class="input-row">
+          <p>pk_T</p>
+          <input type="text" name="pk_T_card" placeholder="pkT">
+      </div>
+      <div class="input-row">
+          <p>K</p>
+          <input type="text" name="K_card" placeholder="K">
+      </div>
+    </form>
+  </div>
 
 {% endblock %}
 
