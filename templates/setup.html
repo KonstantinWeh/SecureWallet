@@ -35,7 +35,7 @@
       event.preventDefault();
       const response = await fetch('/initialize-card');
       const data = await response.json();
-  
+      
       form.pkRS_e_card.value = data.pkRS[0];
       form.pkRS_n_card.value = data.pkRS[1];
       form.sk_card.value = data.sk;
@@ -45,7 +45,7 @@
   </script>
   
 
-    <div class>
+    <div>
 
 
     <form class="box" onsubmit="generateTpiKeys(event, this)">

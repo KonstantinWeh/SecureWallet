@@ -1,3 +1,6 @@
+from services.ORAM import SimpleORAM
+
+
 class TrustedParty:
     _instance = None
 
@@ -10,12 +13,19 @@ class TrustedParty:
 
     def __init__(self):
         if not self._initialized:
-            self._sk = None
-            self._K = None
+            security_param_bits = 128
+            num_blocks = 16
+            self.DB = SimpleORAM(security_param_bits, num_blocks)
+
+            self._sk = self.DB.sk
+            self._K = self.DB.K
+            self._pk_T = "⊥"
             self._sk_RS = None
             self._pk_RS = None
             self._sk_T = None
-            self._pk_T = None
+
+            self._initialized = True
+
 
     @property
     def sk(self):
@@ -64,6 +74,19 @@ class TrustedParty:
     @pk_T.setter
     def pk_T(self, value):
         self._pk_T = value
+
+    def add_card(self, id_H, budget, ctr):
+        if id_H:
+            # TODO: we need to check wheter the id is in the range of the DB
+            self.DB.write(id_H, budget, ctr)
+        else:
+            id_H = 0
+            while self.DB.read(id_H) != None:
+                id_H += 1    
+            self.DB.write(id_H, budget, ctr)
+
+    def get_DB_view(self):
+        return self.DB.get_DB_view()
 
 
 

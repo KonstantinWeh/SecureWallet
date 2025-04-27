@@ -15,3 +15,30 @@ class SimpleORAM:
         DB = [None for _ in range(N)]
 
         return sk, K, DB
+    
+    #return all entries
+    def serve(self):
+        return self.DB
+    
+    def read(self, id_H):
+        if id_H > len(self.DB):
+            return False
+        
+        return self.DB[id_H]
+    
+    def write(self, id_H, budget, ctr):
+        if id_H > len(self.DB):
+            return False
+        
+        self.DB[id_H] = {'budget': budget,
+                         'ctr': ctr
+                        }
+        
+        return self.DB[id_H]
+
+    def get_DB_view(self):
+        # for dev / viz purposes
+
+        return self.DB
+    
+    

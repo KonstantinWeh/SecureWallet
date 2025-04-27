@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+
+{% block title %}Registration{% endblock %}
+
+
+
+{% block head %}
+    {{ super() }}   
+{% endblock %}
+
+{% block content %}
+
+    <script>
+    
+        async function allocateBudget(event, form) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(form); 
+        
+            const data = {
+                bud: formData.get('bud'),
+                id_h: formData.get('id_h')
+            };
+        
+            const response = await fetch('/budget-and-card-allocation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        
+            const result = await response.json();
+            console.log(result); // success!
+            loadHouseholds();
+
+        }
+
+
+
+        async function loadHouseholds() {
+            const response = await fetch('/get-database');
+            const households = await response.json();
+          
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Clear old rows
+          
+            households.forEach(household => {
+              const row = document.createElement('tr');
+              row.className = 'border-b';
+          
+              row.innerHTML = `
+                <td class="px-6 py-4">${household.id}</td>
+                <td class="px-6 py-4">${household.budget}</td>
+                <td class="px-6 py-4">${household.counter}</td>
+              `;
+          
+              tbody.appendChild(row);
+            });
+          }
+          
+        loadHouseholds();
+  </script>
+
+    <div class="box">
+        <p class="box-header">Database</p>
+        <div class="overflow-x-auto rounded-lg shadow-lg mt-8">
+            <table class="min-w-full text-sm text-gray-700">
+              <thead class="bg-gray-200 text-gray-700 uppercase text-xs">
+                <tr>
+                  <th class="px-6 py-3 text-left">Household ID</th>
+                  <th class="px-6 py-3 text-left">Budget</th>
+                  <th class="px-6 py-3 text-left">Counter</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                {% for household in households %}
+                <tr class="border-b">
+                  <td class="px-6 py-4">{{ household.id }}</td>
+                  <td class="px-6 py-4">{{ household.budget }}</td>
+                  <td class="px-6 py-4">{{ household.counter }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="3" class="px-6 py-4 text-center text-gray-400">No households registered yet.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>          
+    </div>
+
+    <form class="box" id="update-households-btn" onsubmit="allocateBudget(event, this)">
+        <p class="box-header">Budget and Card Allocation</p>
+        <div class="input-row">
+            <p>Budget</p>
+            <input type="text" name="bud" placeholder="bud">
+            </div>
+        <div class="input-row"><p>Household ID</p><input type="text" name="id_h" placeholder="id_H - leave empty for new household"></div>
+        <button type="submit">Allocate</button>
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}   
+{% endblock %}

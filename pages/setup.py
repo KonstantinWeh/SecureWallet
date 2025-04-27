@@ -7,30 +7,20 @@ from parties.trusted_party import get_trusted_party
 
 home_bp = Blueprint('home', __name__)
 
-trusted_party = get_trusted_party()
 
 @home_bp.route('/')
+@home_bp.route('/setup')
 def setup():
     return render_template('setup.html')
 
 @home_bp.route("/trusted_party_initialization")
 def generate_tpi_keys():
-    security_param_bits = 128
-    num_blocks = 16
-
-    oram = SimpleORAM(security_param_bits, num_blocks)
-    sk, K, DB = oram.sk, oram.K, oram.DB
-
-    print(sk)
-    print(K)
-
-    trusted_party.sk = sk.hex()
-    trusted_party.K = K.hex()
-    trusted_party.pk_T = "⊥"
+    
+    trusted_party = get_trusted_party()
 
     return jsonify({
-        'sk': sk.hex(),
-        'K': K.hex()
+        'sk': trusted_party.sk.hex(),
+        'K': trusted_party.K.hex()
     })
 
 
@@ -50,7 +40,7 @@ def generate_RS_keys():
     valid = sig.verify(pk, message, signature)
     print(f"Signature valid? {valid}")
 
-
+    trusted_party = get_trusted_party()
     trusted_party.sk_RS = sk
     trusted_party.pk_RS = pk
 
@@ -62,9 +52,18 @@ def generate_RS_keys():
 
 @home_bp.route("/initialize-card")
 def initialize_card():
+
+    trusted_party = get_trusted_party()
+
+    print(
+        trusted_party.pk_RS,
+        trusted_party.sk.hex(),
+        trusted_party.pk_T,
+        trusted_party.K.hex()  
+    )
     return jsonify({
         'pkRS': trusted_party.pk_RS,
-        'sk': trusted_party.sk,
+        'sk': trusted_party.sk.hex(),
         'pkT': trusted_party.pk_T,
-        'K': trusted_party.K
+        'K': trusted_party.K.hex()
     })
