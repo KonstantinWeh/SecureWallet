@@ -1,10 +1,10 @@
-from flask import jsonify, request, Blueprint, render_template
+from flask import jsonify, request, Blueprint, render_template, flash
 from parties.trusted_party import get_trusted_party
 
 import hashlib
 
-from services.RSADS import RSASignature
-
+from services.RSDSA import RSASignature
+from services.encoding import ensure_bytes
 
 transaction_bp = Blueprint('transaction', __name__)
 
@@ -15,18 +15,22 @@ def transaction():
 @transaction_bp.route('/make-payment', methods=["POST"])
 def make_payment():
     trusted_party = get_trusted_party()
+    vendor = trusted_party.get_vendor()
 
     data = request.get_json()
     household_id = int(data.get('id_h'))
     price = data.get('price')
     reclaim_period = data.get('reclaim_period')
 
-    db_entry = trusted_party.user_has_enough_balance(household_id, price)
-
-    print(db_entry)
+    db_entry = trusted_party.user_has_enough_balance(household_id, int(price))
 
     if db_entry == False:
-        return jsonify({"error": "Insufficient balance"}), 400
+        msg = "Household " + str(household_id) + " has insufficient balance!"
+        return jsonify({"error": "Insufficient balance", 
+                        "alert": {
+                            "type": "warning",
+                            "message": msg
+                        }}), 400
   
 
     budget = db_entry['budget']
@@ -36,28 +40,44 @@ def make_payment():
     new_ctr = ctr + 1
 
     commitment, com_r = trusted_party.commitment_scheme.commit(int(price))
-
-    key = str(trusted_party.K).encode('utf-8')
-    tag_message = (str(household_id) + str(new_ctr)).encode('utf-8')
+    print("Commitment in transaction with price", int(price), " is ", ensure_bytes(commitment), " with random number ", com_r)
     
+    key = ensure_bytes(trusted_party.K)
+    tag_message = ensure_bytes(household_id) + ensure_bytes(new_ctr)
+
     tag = hashlib.sha256(key + tag_message).digest()
 
     DSscheme = RSASignature()
-    signature_message = str(tag) + reclaim_period + str(commitment)
-    signature_message = signature_message.encode('utf-8')
-    signature = DSscheme.sign(trusted_party.sk_RS, signature_message)
 
+    signature_message = ensure_bytes(tag) + ensure_bytes(reclaim_period) + ensure_bytes(commitment)
+    signature = DSscheme.sign(trusted_party.sk_RS, signature_message)
 
     proof = (signature, tag, commitment, com_r)
 
-    return jsonify({
-        "proof": {
-            "signature": signature,
-            "tag": tag.hex(),
-            "commitment": commitment,
-            "com_r": com_r
-        }
-    }), 200
+    trusted_party.update_balance(household_id, new_budget, new_ctr)
+
+
+    if vendor.verify(proof, price, reclaim_period, trusted_party.get_pedersen_commitment_scheme()) != None:
+        msg = "Household " + str(household_id) + " has bought the item for " + str(price) + ". Balance is updated."
+        flash(msg, 'success')
+        return jsonify({
+            "proof": {
+                "signature": signature,
+                "tag": tag.hex(),
+                "commitment": commitment,
+                "com_r": com_r
+            }, 
+            "alert": {
+                "type": "success",
+                "message": msg
+            }
+        }), 200
+    else:
+        return jsonify({"error": "Vendor could not verify proof.", 
+                        "alert": {
+                            "type": "warning",
+                            "message": "Vendor could not verify proof."
+                        }}), 400
 
 
 

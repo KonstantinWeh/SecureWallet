@@ -57,12 +57,27 @@
 
             console.log(result); 
 
+            const alertBox = document.getElementById("alert-box");
+            if (result.alert) {
+                alertBox.innerText = result.alert.message;
+                alertBox.style.display = "block";
+                const type = "alert alert-" + result.alert.type;
+                alertBox.className = type;
+            } else {
+                alertBox.style.display = "none";
+                alertBox.className = ""
+            }
+            
+    
+
             const { signature, tag, commitment, com_r } = result.proof;
 
             form.transaction_tag.value = tag;
             form.signature.value = signature;
             form.commitment.value = commitment;
             form.commitment_random.value = com_r;
+
+            loadHouseholds();
 
         }
 
@@ -129,17 +144,16 @@
     
             <!-- Vendor Section -->
             <div class="form-section">
-                <p class="box-header">Vendor</>
-                <div class="input-group">
-                    <label>Price</label>
-                    <input type="text" name="price" placeholder="Enter Price">
+                <p class="box-header">Vendor</p>
+                    
+
+                    
+                <div id="alert-box">
+                    
                 </div>
-                <div class="input-group">
-                    <label>Reclaim Period</label>
-                    <input type="text" name="reclaim_period" placeholder="Enter Reclaim Period">
-                </div>
+     
+
             </div>
-    
     </form>
     
     </div>  

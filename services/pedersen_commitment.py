@@ -47,6 +47,13 @@ class PedersenCommitment:
             r = secrets.randbelow(q)
 
         # Commitment: com = g^m * h^r mod q
+
+        if isinstance(m, bytes):
+            m = int.from_bytes(m, byteorder='big')
+
+        if isinstance(r, bytes):
+            r = int.from_bytes(r, byteorder='big')
+
         com = (pow(g, m, q) * pow(h, r, q)) % q
         return com, r
 

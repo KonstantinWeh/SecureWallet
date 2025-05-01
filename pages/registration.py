@@ -1,5 +1,5 @@
 from parties.smartcard import SmartCard
-from services.RSADS import RSASignature
+from services.RSDSA import RSASignature
 from flask import jsonify, request, Blueprint, render_template
 from services.ORAM import SimpleORAM
 from parties.trusted_party import get_trusted_party

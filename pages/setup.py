@@ -1,4 +1,4 @@
-from services.RSADS import RSASignature
+from services.RSDSA import RSASignature
 from flask import jsonify
 from flask import render_template
 from services.ORAM import SimpleORAM
@@ -26,23 +26,9 @@ def generate_tpi_keys():
 
 @home_bp.route("/registration-station-setup")
 def generate_RS_keys():
-    sig = RSASignature(key_size_bits=1024)
-
-    sk, pk = sig.keygen()
-
-    message = b"Test message for RSA signature"
-    signature = sig.sign(sk, message)
-
-    print(f"Signature: {signature}")
-    print(f"sk: {sk}")
-    print(f"pk: {pk}")
-
-    valid = sig.verify(pk, message, signature)
-    print(f"Signature valid? {valid}")
 
     trusted_party = get_trusted_party()
-    trusted_party.sk_RS = sk
-    trusted_party.pk_RS = pk
+    sk, pk = trusted_party.setup_signature()
 
     return jsonify({
         'sk': sk,
