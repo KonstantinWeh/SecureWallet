@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+
+{% block title %}Reclaim{% endblock %}
+
+{% block head %}
+    {{ super() }}   
+{% endblock %}
+
+{% block content %}
+
+    <script>
+
+        async function loadClaims() {
+            const response = await fetch('/get-claims');
+            const proofs = await response.json();
+          
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Clear old rows
+          
+            proofs.forEach(proof => {
+              const row = document.createElement('tr');
+              row.className = 'border-b';
+          
+              row.innerHTML = `
+                <td id="appadd">${proof.id}</td>
+                <td id="appadd">${proof.signature}</td>
+                <td id="appadd">${proof.tag}</td>
+                <td id="appadd">${proof.commitment}</td>
+                <td id="appadd">${proof.com_r}</td>
+                <td id="appadd">${proof.price}</td>
+                <td id="appadd">${proof.reclaim_period}</td>
+              `;
+          
+              tbody.appendChild(row);
+            });
+          }
+
+        async function aggregateProofs(event, form) {
+            event.preventDefault();
+            const response = await fetch('/aggregate_proofs');
+            const aggregate_proof_data = await response.json();
+            
+            form.total_price.value = aggregate_proof_data.price_sum;
+            form.r_sum.value = aggregate_proof_data.r_sum;
+            
+            const response_proofs = await fetch('/get-claims');
+            const proofs = await response_proofs.json();
+
+            const tbody_trusted_party = document.getElementById("signatures-body");
+
+            // Clear existing rows
+            tbody_trusted_party.innerHTML = "";
+
+            if (proofs.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">No signatures registered yet.</td>`;
+                tbody_trusted_party.appendChild(row);
+                return;
+            }
+
+            proofs.forEach(proof => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td id="addpadd">${proof.id}</td>
+                <td id="addpadd">${proof.signature}</td>
+                <td id="addpadd">${proof.commitment}</td> 
+                <td id="addpadd">${proof.tag}</td> 
+                `;
+                tbody_trusted_party.appendChild(row);
+            });
+        }
+
+        async function verifySignatures() {
+            console.log("sig")
+        }
+        
+        async function verifyTags() {
+            console.log("tag")
+            
+        }
+        
+        async function verifyCommitment() {
+            console.log("com")
+            
+        }
+
+        loadClaims();
+  </script>
+
+ 
+    <div>
+
+        <form class="box" onsubmit="aggregateProofs(event, this)">
+            <p class="box-header">Preparation of claims by vendor</p>
+            <div>
+                <table class="gridtable" id="Select-b">
+                    <thead>
+                        <tr>
+                            <th width="30px">ID</th>
+                            <th width="50px">Signature</th>
+                            <th width="50px">Transaction Tag</th>
+                            <th width="50px">Commitment</th>
+                            <th width="50px">Random</th>
+                            <th width="50px">Price</th>
+                            <th width="50px">Reclaim Period</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proof in proofs %}
+                        <tr>
+                            <td class="appadd">{{ proof.id }}</td>
+                            <td class="appadd">{{ proof.signature }}</td>
+                            <td class="appadd">{{ proof.tag }}</td>
+                            <td class="appadd">{{ proof.commitment }}</td>
+                            <td class="appadd">{{ proof.com_r }}</td>
+                            <td class="appadd">{{ proof.price }}</td>
+                            <td class="appadd">{{ proof.reclaim_period }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="">No proofs registered yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>         
+            
+            <button type="submit" style="margin-top: 30px;">Aggregate claims</button>
+            
+            <p class="box-header">Aggregates</p>
+            
+            <div class="input-group">
+                <label>Total Price</label>
+                <input type="text" name="total_price" placeholder="Enter Price">
+            </div>
+            <div class="input-group">
+                <label>Sum Random</label>
+                <input type="text" name="r_sum" placeholder="Enter Reclaim Period">
+            </div>
+        </form>
+        
+        <form class="box">
+            <p class="box-header">Verification of claims by trusted party</p>
+            <div>
+                <table class="gridtable" id="signatures">
+                    <thead>
+                        <tr>
+                            <th width="30px">ID</th>
+                            <th width="100px">Signature</th>
+                            <th width="100px">Commitment</th>
+                            <th width="100px">Tag</th>
+
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="signatures-body">
+                        <tr>
+                            <td colspan="3">No signatures registered yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <button type="button" onclick="verifySignatures()" style="margin-top: 30px; width: 200px">Verify signatures</button>
+            <div>
+                <table class="gridtable" id="signatures">
+                    <thead>
+                        <tr>
+                            <th width="100px">Signature</th>
+                            <th width="100px">Valid</th>                 
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            
+            
+            <button type="button" onclick="verifyTags()" style="margin-top: 30px; width: 200px">Verify tags</button>
+            <div>
+                <table class="gridtable" id="signatures">
+                    <thead>
+                        <tr>
+                            <th width="100px">Tag</th>
+                            <th width="100px">Unique</th>                 
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+
+            <button type="button" onclick="verifyCommitment()" style="margin-top: 30px; width: 200px">Verify commitment</button>
+            <div>
+                <table class="gridtable" id="signatures">
+                    <thead>
+                        <tr>
+                            <th width="100px">Commitment</th>
+                            <th width="100px">Valid</th>                 
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </form>
+    </div>          
+    {% endblock %}
+    
+{% block footer %}
+{{ super() }}   
+{% endblock %}

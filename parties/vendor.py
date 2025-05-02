@@ -14,6 +14,10 @@ class Vendor:
         self.pkRS = pk
 
 
+    def get_proofs(self):
+        return self.local_storage
+
+
     def verify_signature(self, signature, message):
         signature = ensure_bytes(signature)
         RSDSA = RSASignature()
@@ -53,8 +57,9 @@ class Vendor:
                 return None  # return ⊥
 
             # If everything passes, store (π, DB)
-            self.local_storage.append((proof, self.DB.copy()))
-            return (proof, self.DB.copy())
+            db_entry = ((signature, tag, commitment, com_r), int(price), int(reclaim_period))
+            self.local_storage.append(db_entry)
+            return proof
 
         except Exception as e:
             print(f"Error during verification: {e}")
