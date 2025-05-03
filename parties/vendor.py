@@ -20,6 +20,8 @@ class Vendor:
 
     def verify_signature(self, signature, message):
         signature = ensure_bytes(signature)
+        print("Message in verify_signature: ", message)
+
         RSDSA = RSASignature()
         valid = RSDSA.verify(self.pkRS, message, signature)
         return valid
@@ -42,8 +44,8 @@ class Vendor:
             reclaim_period = ensure_bytes(reclaim_period)
             
             # Construct message τ || ε || Com
-            message = tag + reclaim_period + commitment
 
+            message = tag + reclaim_period + commitment
 
             # Verify digital signature
             RSDSA = RSASignature()

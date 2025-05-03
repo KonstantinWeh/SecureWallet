@@ -40,7 +40,6 @@ def make_payment():
     new_ctr = ctr + 1
 
     commitment, com_r = trusted_party.commitment_scheme.commit(int(price))
-    print("Commitment in transaction with price", int(price), " is ", ensure_bytes(commitment), " with random number ", com_r)
     
     key = ensure_bytes(trusted_party.K)
     tag_message = ensure_bytes(household_id) + ensure_bytes(new_ctr)

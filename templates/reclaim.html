@@ -63,25 +63,127 @@
                 row.innerHTML = `
                 <td id="addpadd">${proof.id}</td>
                 <td id="addpadd">${proof.signature}</td>
-                <td id="addpadd">${proof.commitment}</td> 
-                <td id="addpadd">${proof.tag}</td> 
+                <td id="addpadd">${proof.commitment}</td>
+                <td id="addpadd">${proof.tag}</td>
                 `;
                 tbody_trusted_party.appendChild(row);
             });
         }
 
         async function verifySignatures() {
-            console.log("sig")
+            const response = await fetch('/verify_signatures');
+            const signatures = await response.json();
+
+            console.log(signatures)
+
+            const tbody_trusted_party = document.getElementById("valid-signatures-body");
+
+            // Clear existing rows
+            tbody_trusted_party.innerHTML = "";
+
+            if (signatures.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">Not validated yet.</td>`;
+                tbody_trusted_party.appendChild(row);
+                return;
+            }
+
+            signatures.forEach(signature => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td id="addpadd">${signature[0]}</td>
+                <td id="addpadd">${signature[1]}</td>
+                `;
+                tbody_trusted_party.appendChild(row);
+            });
+
         }
         
         async function verifyTags() {
             console.log("tag")
+
+            const response = await fetch('/verify_tags');
+            const signatures = await response.json();
+
+            console.log(signatures)
+
+            const tbody_trusted_party = document.getElementById("valid-tags-body");
+
+            // Clear existing rows
+            tbody_trusted_party.innerHTML = "";
+
+            if (signatures.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">Not validated yet.</td>`;
+                tbody_trusted_party.appendChild(row);
+                return;
+            }
+
+            signatures.forEach(signature => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td id="addpadd">${signature[0]}</td>
+                <td id="addpadd">${signature[1]}</td>
+                `;
+                tbody_trusted_party.appendChild(row);
+            });
+
             
         }
         
         async function verifyCommitment() {
             console.log("com")
             
+            const response = await fetch('/verify_commitment');
+            const result = await response.json();
+
+            console.log(result)
+
+            const tbody_trusted_party = document.getElementById("valid-commitment-body");
+
+            // Clear existing rows
+            tbody_trusted_party.innerHTML = "";
+
+            if (result.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">Not checked yet.</td>`;
+                tbody_trusted_party.appendChild(row);
+                return;
+            }
+
+            result.commitments.forEach(commitment => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td id="addpadd">${commitment[0]}</td>
+                <td id="addpadd">${commitment[1]}</td>
+                `;
+                tbody_trusted_party.appendChild(row);
+            });
+
+            const tbody = document.getElementById("valid-commitment-checks-body");
+
+            // Clear existing rows
+            tbody.innerHTML = "";
+
+            if (result.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">Not checked yet.</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td id="addpadd">${result.product_of_commitments}</td>
+            <td id="addpadd">${result.total_sum_commitment}</td>
+            `;
+            tbody.appendChild(row);
+            const row1 = document.createElement("tr");
+            row1.innerHTML = `
+            <td id="addpadd">Same?</td>
+            <td id="addpadd">${result.same}</td>
+            `;
+            tbody.appendChild(row1);
         }
 
         loadClaims();
@@ -171,6 +273,11 @@
                             <th width="100px">Valid</th>                 
                         </tr>
                     </thead>
+                    <tbody id="valid-signatures-body">
+                        <tr>
+                            <td colspan="2">Not validated yet.</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             
@@ -184,6 +291,11 @@
                             <th width="100px">Unique</th>                 
                         </tr>
                     </thead>
+                    <tbody id="valid-tags-body">
+                        <tr>
+                            <td colspan="2">Not validated yet.</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
 
@@ -194,9 +306,27 @@
                     <thead>
                         <tr>
                             <th width="100px">Commitment</th>
-                            <th width="100px">Valid</th>                 
+                            <th width="100px">Associated Price</th>                 
                         </tr>
                     </thead>
+                    <tbody id="valid-commitment-body">
+                        <tr>
+                            <td colspan="2">Not checked yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="gridtable" id="signatures">
+                    <thead>
+                        <tr>
+                            <th width="100px">Product of Commitments</th>
+                            <th width="100px">Total Sum Commitment</th>                 
+                        </tr>
+                    </thead>
+                    <tbody id="valid-commitment-checks-body">
+                        <tr>
+                            <td colspan="2">Not checked yet.</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </form>

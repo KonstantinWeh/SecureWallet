@@ -18,6 +18,9 @@ class PedersenCommitment:
     def __init__(self, security_param_bits):
         self.params = self.gen(security_param_bits)
 
+    def get_mod_q(self):
+        return self.params[1]
+
     def gen(self, l_bits):
         # Step 1: Generate a prime q
         q = generate_prime(l_bits)
