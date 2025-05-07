@@ -92,7 +92,7 @@
                 const row = document.createElement("tr");
                 row.innerHTML = `
                 <td id="addpadd">${signature[0]}</td>
-                <td id="addpadd">${signature[1]}</td>
+                <td id="addpadd" style="text-align: center">${signature[1]}</td>
                 `;
                 tbody_trusted_party.appendChild(row);
             });
@@ -123,7 +123,7 @@
                 const row = document.createElement("tr");
                 row.innerHTML = `
                 <td id="addpadd">${signature[0]}</td>
-                <td id="addpadd">${signature[1]}</td>
+                <td id="addpadd" style="text-align: center">${signature[1]}</td>
                 `;
                 tbody_trusted_party.appendChild(row);
             });
@@ -155,7 +155,7 @@
                 const row = document.createElement("tr");
                 row.innerHTML = `
                 <td id="addpadd">${commitment[0]}</td>
-                <td id="addpadd">${commitment[1]}</td>
+                <td id="addpadd" style="text-align: center">${commitment[1]}</td>
                 `;
                 tbody_trusted_party.appendChild(row);
             });
@@ -263,8 +263,8 @@
                 </table>
             </div>
 
-
-            <button type="button" onclick="verifySignatures()" style="margin-top: 30px; width: 200px">Verify signatures</button>
+            <hr style="border-color: white; border-style: solid; width: 80%;">
+            <hr>
             <div>
                 <table class="gridtable" id="signatures">
                     <thead>
@@ -280,9 +280,10 @@
                     </tbody>
                 </table>
             </div>
+            <button type="button" onclick="verifySignatures()" style="margin-top: 30px; margin-bottom: 50px; width: 200px">Verify signatures</button>
             
-            
-            <button type="button" onclick="verifyTags()" style="margin-top: 30px; width: 200px">Verify tags</button>
+            <hr style="border-color: white; border-style: solid; width: 80%;">
+
             <div>
                 <table class="gridtable" id="signatures">
                     <thead>
@@ -298,9 +299,10 @@
                     </tbody>
                 </table>
             </div>
+            <button type="button" onclick="verifyTags()" style="margin-top: 30px; margin-bottom: 50px; width: 200px">Verify tags</button>
 
+            <hr style="border-color: white; border-style: solid; width: 80%;">
 
-            <button type="button" onclick="verifyCommitment()" style="margin-top: 30px; width: 200px">Verify commitment</button>
             <div>
                 <table class="gridtable" id="signatures">
                     <thead>
@@ -315,6 +317,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <hr style="border-color: white; border-style: dashed; width: 80%;">
                 <table class="gridtable" id="signatures">
                     <thead>
                         <tr>
@@ -329,6 +332,7 @@
                     </tbody>
                 </table>
             </div>
+            <button type="button" onclick="verifyCommitment()" style="margin-top: 30px; margin-bottom: 50px; width: 200px">Verify commitment</button>
         </form>
     </div>          
     {% endblock %}
