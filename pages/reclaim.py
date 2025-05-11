@@ -1,9 +1,9 @@
 from parties.smartcard import SmartCard
-from services.RSDSA import RSASignature
+from primitives.RSAsignature import RSASignature
 from flask import jsonify, request, Blueprint, render_template
-from services.ORAM import SimpleORAM
+from primitives.ORAM import SimpleORAM
 from parties.trusted_party import get_trusted_party
-from services.encoding import ensure_bytes
+from primitives.encoding import ensure_bytes
 
 reclaim_bp = Blueprint('reclaim', __name__)
 

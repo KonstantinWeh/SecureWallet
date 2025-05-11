@@ -1,6 +1,6 @@
-from services.RSDSA import RSASignature
-from services.pedersen_commitment import PedersenCommitment
-from services.encoding import ensure_bytes
+from primitives.RSAsignature import RSASignature
+from primitives.pedersen_commitment import PedersenCommitment
+from primitives.encoding import ensure_bytes
 
 
 class Vendor:

@@ -3,8 +3,8 @@ from parties.trusted_party import get_trusted_party
 
 import hashlib
 
-from services.RSDSA import RSASignature
-from services.encoding import ensure_bytes
+from primitives.RSAsignature import RSASignature
+from primitives.encoding import ensure_bytes
 
 transaction_bp = Blueprint('transaction', __name__)
 

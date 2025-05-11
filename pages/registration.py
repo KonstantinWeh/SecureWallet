@@ -1,7 +1,7 @@
 from parties.smartcard import SmartCard
-from services.RSDSA import RSASignature
+from primitives.RSAsignature import RSASignature
 from flask import jsonify, request, Blueprint, render_template
-from services.ORAM import SimpleORAM
+from primitives.ORAM import SimpleORAM
 from parties.trusted_party import get_trusted_party
 
 registration_bp = Blueprint('registration', __name__)

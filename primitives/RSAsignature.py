@@ -1,7 +1,7 @@
 import secrets
 import hashlib
 from sympy import nextprime, gcd
-from services.encoding import ensure_bytes
+from primitives.encoding import ensure_bytes
 
 class RSASignature:
     def __init__(self, key_size_bits=512):

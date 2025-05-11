@@ -1,7 +1,7 @@
-from services.RSDSA import RSASignature 
+from primitives.RSAsignature import RSASignature 
 from flask import jsonify# type: ignore
 from flask import render_template# type: ignore
-from services.ORAM import SimpleORAM
+from primitives.ORAM import SimpleORAM
 from flask import Blueprint, render_template # type: ignore
 from parties.trusted_party import get_trusted_party
 

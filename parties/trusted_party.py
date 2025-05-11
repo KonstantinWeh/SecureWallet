@@ -1,7 +1,7 @@
 from parties.vendor import Vendor
-from services.ORAM import SimpleORAM
-from services.RSDSA import RSASignature
-from services.pedersen_commitment import PedersenCommitment
+from primitives.ORAM import SimpleORAM
+from primitives.RSAsignature import RSASignature
+from primitives.pedersen_commitment import PedersenCommitment
 
 
 class TrustedParty:
