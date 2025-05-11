@@ -1,6 +1,6 @@
 from parties.smartcard import SmartCard
 from primitives.RSAsignature import RSASignature
-from flask import jsonify, request, Blueprint, render_template
+from flask import jsonify, request, Blueprint, render_template # type: ignore
 from primitives.ORAM import SimpleORAM
 from parties.trusted_party import get_trusted_party
 
