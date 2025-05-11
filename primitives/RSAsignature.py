@@ -18,7 +18,7 @@ class RSASignature:
         phi = (p - 1) * (q - 1)
 
         # Step 2: Choose public exponent e
-        e = 65537  # standard choice
+        e = 65537
 
         # Step 3: Compute private exponent d
         d = pow(e, -1, phi)

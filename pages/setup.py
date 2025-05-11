@@ -1,8 +1,8 @@
-from services.RSDSA import RSASignature
-from flask import jsonify
-from flask import render_template
+from services.RSDSA import RSASignature 
+from flask import jsonify# type: ignore
+from flask import render_template# type: ignore
 from services.ORAM import SimpleORAM
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template # type: ignore
 from parties.trusted_party import get_trusted_party
 
 home_bp = Blueprint('home', __name__)
