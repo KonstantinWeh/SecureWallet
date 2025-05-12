@@ -26,7 +26,7 @@ class PedersenCommitment:
         q = generate_prime(l_bits)
 
         # Step 2: Define group G implicitly (we use Z_q^*)
-        G = f"Z_{q}^*"  # Just symbolic for now
+        G = f"Z_{q}^*" 
 
         # Step 3: Choose generators g, h
         g_seed = secrets.token_bytes(32)

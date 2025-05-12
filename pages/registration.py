@@ -21,7 +21,6 @@ def allocate_budget():
     if household_id != '':
         household_id = int(household_id)
 
-    # Now you have `budget` and `household_id`
     print(budget, household_id)
 
     trusted_party.add_card(household_id, budget, 0)
@@ -39,7 +38,6 @@ def get_smart_card_state():
     
     if household_id != '':
         household_id = int(household_id) 
-
 
     return jsonify({
         'pkRS_e': trusted_party.pk_RS[0],
