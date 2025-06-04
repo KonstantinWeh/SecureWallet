@@ -1,7 +1,17 @@
 import secrets
 import hashlib
-from sympy import nextprime, gcd
+from sympy import nextprime, gcd, isprime
 from primitives.encoding import ensure_bytes
+
+
+def generate_safe_prime_pair(bits):
+    # Comment 1 - safe primes: Generate a random prime q with (bits - 1) bits
+
+    while True:
+        q = nextprime(secrets.randbits(bits - 1))
+        p = 2 * q + 1
+        if isprime(p):
+            return p, q
 
 class RSASignature:
     def __init__(self, key_size_bits=512):
@@ -10,22 +20,27 @@ class RSASignature:
         self._sk, self._pk = self.keygen()
 
     def keygen(self):
-        # Step 1: Generate two large primes p and q
-        p = nextprime(secrets.randbits(self.key_size_bits // 2))
-        q = nextprime(secrets.randbits(self.key_size_bits // 2))
+        # Comment 3 - repeat if e is not co prime with phi
+        while True:
+            # Comment 3 - changed prime generation
+            # Generate two large safe primes p and q
+            p, q = generate_safe_prime_pair(self.key_size_bits)
+            n = p * q
+            phi = (p - 1) * (q - 1)
 
-        n = p * q
-        phi = (p - 1) * (q - 1)
+            # public exponent e
+            e = 65537
 
-        # Step 2: Choose public exponent e
-        e = 65537
+            # ensure e is coprime with phi
+            if gcd(e, phi) != 1:
+                continue  # retry with new primes
 
-        # Step 3: Compute private exponent d
-        d = pow(e, -1, phi)
+            # private exponent d
+            d = pow(e, -1, phi)
 
-        sk = (d, n)
-        pk = (e, n)
-        return sk, pk
+            sk = (d, n)
+            pk = (e, n)
+            return sk, pk
 
 
     @property
