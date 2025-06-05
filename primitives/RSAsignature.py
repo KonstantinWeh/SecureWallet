@@ -5,16 +5,23 @@ from primitives.encoding import ensure_bytes
 
 
 def generate_safe_prime_pair(bits):
-    # Comment 1 - safe primes: Generate a random prime q with (bits - 1) bits
-
+    # compute safe primes as pointed out
     while True:
-        q = nextprime(secrets.randbits(bits - 1))
+        # Generate random odd q in [2^(bits-1), 2^bits)
+        q = secrets.randbits(bits - 1) | 1  # ensure q is odd
+        q |= (1 << (bits - 2))  # ensure q has (bits - 1) bits (i.e. MSB = 1)
+
+        if not isprime(q):
+            continue
+
         p = 2 * q + 1
         if isprime(p):
             return p, q
 
+
 class RSASignature:
-    def __init__(self, key_size_bits=512):
+    # 256 bits as a trade off between realistic choice and speed
+    def __init__(self, key_size_bits=256):
         self.key_size_bits = key_size_bits
 
         self._sk, self._pk = self.keygen()

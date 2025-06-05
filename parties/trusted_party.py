@@ -37,7 +37,7 @@ class TrustedParty:
         self.vendor.set_pk(pk)
 
     def setup_signature(self):
-        self.sig = RSASignature(key_size_bits=1024)
+        self.sig = RSASignature()
 
         self.sk_RS = self.sig.sk
         self.pk_RS = self.sig.pk
