@@ -38,35 +38,3 @@ class SmartCard:
     def update_balance(self, id_H, budget, ctr):
         trusted_party = get_trusted_party()
         trusted_party.update_balance(id_H, budget, ctr)
-
-
-# Example Usage
-if __name__ == "__main__":
-    # Simulate initial smart card state
-    initial_state = ("pkRS_example", "skT_example", "pkT_example", "K_example")
-
-    # Simulated database
-    DB = {}
-
-    # RS side: allocate budget, generate household id
-    allocated_budget = 1000
-    next_household_id = "H12345"
-    secret_skRS = "secret_skRS_example"
-
-    # Create smart card with initial state
-    sc = SmartCard(initial_state)
-
-    # Step-by-step protocol
-    sc.receive_household_id(next_household_id)
-    if sc.receive_skRS_and_verify(secret_skRS, verify_signature_func):
-        sc.receive_budget(allocated_budget)
-        if sc.initialize_counter_and_store(ORAM_Write, DB):
-            final_state = sc.output_state()
-            print("Registration successful. Final smart card state:")
-            print(final_state)
-            print("Database contents:")
-            print(DB)
-        else:
-            print("Failed during ORAM write.")
-    else:
-        print("Verification of skRS failed.")
