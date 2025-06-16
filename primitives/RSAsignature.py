@@ -20,7 +20,8 @@ def generate_safe_prime_pair(bits):
 
 
 class RSASignature:
-    # 256 bits as a trade off between realistic choice and speed
+    # 256 bits is not a realistic choice as it is insecure
+    # However, this was enough for demonstration purposes (and allows fast computation)
     def __init__(self, key_size_bits=256):
         self.key_size_bits = key_size_bits
 
